@@ -212,10 +212,19 @@ st.set_page_config(
 st.markdown("""
 <style>
 [data-testid="stToolbar"] {display: none !important;}
+[data-testid="stToolbarActions"] {display: none !important;}
+[data-testid="stHeader"] {display: none !important;}
+[data-testid="stDecoration"] {display: none !important;}
 [data-testid="stDeployButton"] {display: none !important;}
+[data-testid="stAppToolbar"] {display: none !important;}
+[data-testid="manage-app-button"] {display: none !important;}
+[data-testid="stBottom"] {display: none !important;}
 .stAppDeployButton {display: none !important;}
+.stToolbar {display: none !important;}
+.viewerBadge_container__r5tak {display: none !important;}
 #MainMenu {visibility: hidden !important;}
 footer {visibility: hidden !important;}
+header {visibility: hidden !important;}
 </style>
 """, unsafe_allow_html=True)
 
