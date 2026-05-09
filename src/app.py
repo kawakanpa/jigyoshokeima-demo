@@ -63,8 +63,10 @@ QUESTIONS = [
 TOTAL = len(QUESTIONS)
 
 
-def _get_question(used_numbers=None, allowed_numbers=None, sequential=False):
+def _get_question(used_numbers=None, allowed_numbers=None, sequential=False, chapter=None):
     pool = QUESTIONS
+    if chapter is not None:
+        pool = [q for q in pool if q.get("chapter") == chapter]
     if allowed_numbers is not None:
         pool = [q for q in pool if q["number"] in allowed_numbers]
     if used_numbers:
@@ -95,6 +97,7 @@ def init_state():
         "mode": "normal",
         "sequential": False,
         "allowed_numbers": None,
+        "chapter": None,
     }
     for key, value in defaults.items():
         if key not in st.session_state:
@@ -121,13 +124,14 @@ def _build_allowed(mode):
     return None
 
 
-def start_quiz(num_questions, mode, sequential):
+def start_quiz(num_questions, mode, sequential, chapter=None):
     allowed = _build_allowed(mode)
     st.session_state.update({
         "num_questions": num_questions,
         "mode": mode,
         "sequential": sequential,
         "allowed_numbers": allowed,
+        "chapter": chapter,
         "quiz_started": True,
         "quiz_finished": False,
         "score": 0,
@@ -139,6 +143,7 @@ def start_quiz(num_questions, mode, sequential):
     st.session_state.current_quiz = _get_question(
         allowed_numbers=allowed,
         sequential=sequential,
+        chapter=chapter,
     )
 
 
@@ -160,6 +165,7 @@ def go_next():
         used_numbers=st.session_state.used_numbers,
         allowed_numbers=st.session_state.allowed_numbers,
         sequential=st.session_state.sequential,
+        chapter=st.session_state.chapter,
     )
 
 
@@ -179,7 +185,18 @@ def show_settings():
     st.divider()
 
     # 章選択
-    st.selectbox("出題範囲", ["全章（ランダム出題）"])
+    chapters = {}
+    for q in QUESTIONS:
+        ch_num = q.get("chapter")
+        ch_title = q.get("chapter_title", f"第{ch_num}章")
+        if ch_num not in chapters:
+            chapters[ch_num] = {"title": ch_title, "count": 0}
+        chapters[ch_num]["count"] += 1
+    chapter_options = {"全章（ランダム出題）": None}
+    for num, info in sorted(chapters.items()):
+        chapter_options[f"{info['title']}（{info['count']}問）"] = num
+    selected_label = st.selectbox("出題範囲", list(chapter_options.keys()))
+    selected_chapter = chapter_options[selected_label]
 
     # 出題モード
     mode_options = {
@@ -206,7 +223,7 @@ def show_settings():
 
     if st.button("スタート ▶", type="primary", use_container_width=True):
         try:
-            start_quiz(int(num_questions), selected_mode, selected_sequential)
+            start_quiz(int(num_questions), selected_mode, selected_sequential, selected_chapter)
             st.rerun()
         except ValueError as e:
             st.error(str(e))
