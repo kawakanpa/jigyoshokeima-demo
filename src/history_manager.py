@@ -1,26 +1,18 @@
-"""問題の解答履歴を管理するモジュール。"""
+"""問題の解答履歴をセッション内のみで管理するモジュール（デモ版）。"""
 
-import json
 from datetime import date
-from pathlib import Path
 
-_HISTORY_FILE = Path(__file__).parent.parent / "data" / "history.json"
+import streamlit as st
+
+_KEY = "_demo_history"
 
 
 def _load():
-    if not _HISTORY_FILE.exists():
-        return {}
-    try:
-        return json.loads(_HISTORY_FILE.read_text(encoding="utf-8"))
-    except Exception:
-        return {}
+    return st.session_state.get(_KEY, {})
 
 
 def _save(history):
-    _HISTORY_FILE.parent.mkdir(parents=True, exist_ok=True)
-    _HISTORY_FILE.write_text(
-        json.dumps(history, ensure_ascii=False, indent=2), encoding="utf-8"
-    )
+    st.session_state[_KEY] = history
 
 
 def record_answer(question_number, correct):
