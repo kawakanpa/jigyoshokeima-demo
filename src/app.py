@@ -179,22 +179,27 @@ def show_settings():
     wrong_count = len(history_manager.get_wrong_numbers())
     answered_count = len(history_manager.get_answered_numbers())
     st.caption(
-        f"📄 全1章　（全 {TOTAL} 問 ／ "
+        f"📄 全5章　（全 {TOTAL} 問 ／ "
         f"解答済 {answered_count} 問 ／ 誤答 {wrong_count} 問）"
     )
     st.divider()
 
-    # 章選択
-    chapters = {}
+    # 章選択（全5章表示、デモ問題は第1章のみ）
+    ALL_CHAPTERS = [
+        (1, "第1章：事業承継関連税制等"),
+        (2, "第2章：事業承継関連法制等"),
+        (3, "第3章：M&A基礎知識・関連会計"),
+        (4, "第4章：M&A関連法制等"),
+        (5, "第5章：事業承継・M&Aコンサルティング（総合問題）"),
+    ]
+    q_counts = {}
     for q in QUESTIONS:
-        ch_num = q.get("chapter")
-        ch_title = q.get("chapter_title", f"第{ch_num}章")
-        if ch_num not in chapters:
-            chapters[ch_num] = {"title": ch_title, "count": 0}
-        chapters[ch_num]["count"] += 1
+        ch = q.get("chapter")
+        q_counts[ch] = q_counts.get(ch, 0) + 1
     chapter_options = {"全章（ランダム出題）": None}
-    for num, info in sorted(chapters.items()):
-        chapter_options[f"{info['title']}（{info['count']}問）"] = num
+    for num, title in ALL_CHAPTERS:
+        count = q_counts.get(num, 0)
+        chapter_options[f"{title}（{count}問）"] = num
     selected_label = st.selectbox("出題範囲", list(chapter_options.keys()))
     selected_chapter = chapter_options[selected_label]
 
@@ -222,11 +227,14 @@ def show_settings():
     st.divider()
 
     if st.button("スタート ▶", type="primary", use_container_width=True):
-        try:
-            start_quiz(int(num_questions), selected_mode, selected_sequential, selected_chapter)
-            st.rerun()
-        except ValueError as e:
-            st.error(str(e))
+        if selected_chapter is not None and q_counts.get(selected_chapter, 0) == 0:
+            st.error("デモ版では第1章のみ問題があります。本格版（全600問）はメールでご連絡ください。")
+        else:
+            try:
+                start_quiz(int(num_questions), selected_mode, selected_sequential, selected_chapter)
+                st.rerun()
+            except ValueError as e:
+                st.error(str(e))
 
     st.divider()
     st.info(
