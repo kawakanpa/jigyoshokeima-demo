@@ -25,6 +25,7 @@ QUESTIONS = [
         "chapter": 1,
         "chapter_title": "第1章：M&A基礎知識",
         "section": "M&A用語",
+        "explanation": "デューデリジェンス（DD）とは、M&Aにおいて買収対象企業の財務・法務・税務・事業などを詳細に調査するプロセスです。適正な買収価格の算定や潜在リスクの把握に不可欠であり、実務では必ず実施されます。",
     },
     {
         "number": 2,
@@ -41,6 +42,7 @@ QUESTIONS = [
         "chapter": 1,
         "chapter_title": "第1章：M&A基礎知識",
         "section": "M&Aスキーム",
+        "explanation": "株式譲渡では会社の法人格がそのまま存続するため、許認可・取引契約・雇用契約も原則として引き継がれます。一方で簿外債務も引き継ぐリスクがあります。なお、株主である売り手個人に課税されるのは所得税（譲渡所得）であり、法人税ではありません。",
     },
     {
         "number": 3,
@@ -57,6 +59,7 @@ QUESTIONS = [
         "chapter": 1,
         "chapter_title": "第1章：M&A基礎知識",
         "section": "事業承継の基礎",
+        "explanation": "経営者保証とは、中小企業の融資に際し経営者個人が連帯保証人となる慣行です。事業承継時には前経営者の保証解除と後継者の新保証という「二重保証」が問題となることがあります。2019年策定の「経営者保証に関するガイドライン」の特則により、承継時の二重保証回避が図られています。",
     },
 ]
 
@@ -302,6 +305,10 @@ def show_question():
                 st.error(f"❌ {key}．{label}　← あなたの回答")
             else:
                 st.write(f"　　{key}．{label}")
+
+        explanation = quiz.get("explanation", "")
+        if explanation:
+            st.info(f"📝 **解説**\n\n{explanation}")
 
         st.divider()
         if num >= total:
