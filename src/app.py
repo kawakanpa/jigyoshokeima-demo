@@ -209,6 +209,16 @@ st.set_page_config(
     layout="centered",
 )
 
+st.markdown("""
+<style>
+[data-testid="stToolbar"] {display: none !important;}
+[data-testid="stDeployButton"] {display: none !important;}
+.stAppDeployButton {display: none !important;}
+#MainMenu {visibility: hidden !important;}
+footer {visibility: hidden !important;}
+</style>
+""", unsafe_allow_html=True)
+
 
 def init_state():
     defaults = {
