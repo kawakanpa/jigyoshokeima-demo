@@ -1,0 +1,6 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# 解答履歴（ローカル個人データ）
+data/history.json
